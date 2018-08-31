@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Title</title>
+  <meta charset="utf-8">
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+    @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+    body {
+      font-family: 'Droid Serif';
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: 'Yanone Kaffeesatz';
+      font-weight: normal;
+    }
+
+    .remark-code,
+    .remark-inline-code {
+      font-family: 'Ubuntu Mono';
+    }
+  </style>
+</head>
+
+<body>
+  <textarea id="source">
+
+class: center, middle
+
+## ReasonML
+
+???
+- "Industrial" programming community has been rediscovering FP and now statically typed FP in particular.
+- static typing got a bad name from Java.
+- Javascript is the most widely used / installed language.
+- We're already transpiling to Javascript (ES6 / ESNext / Typescript etc.)
+- So why not a statically typed FP language that transpiles to Javascript? There are several (Elm, Fable, Purescript, GHCJS etc.)
+
+---
+
+## What is it?
+
+ - A new syntax / toolchain for OCaml
+
+   - From Facebook
+
+???
+- Can compile to javascript or native, although the focus is on JS. Native could be promising in the future.
+- Facebook messenger
+---
+
+## A Little history
+
+- OCaml - a multiparadigm but mainly functional language.
+  - a very fast and modular compiler (pluggable backends etc.)
+
+- Bucklescript
+  - a new Javascript backend for the OCaml compiler from Bloomberg
+
+- ReasonML 
+    - Facebook has a bunch of tooling written in OCaml
+          - Hack
+          - Flow
+          - Infer
+    - Wanted to make OCaml more approachable for more developers.
+    - w/ Bucklescript, can be used in place of Javascript for front-end work
+      - ReasonReact
+???
+- It has an object system but approximately no-one uses it for application level code.
+- Bucklescript
+    - Bloomberg developed it to turn their js codebase into something more manageable
+- Facebook has a lot of tooling in OCaml (Hack, Flow, Infer). Wanted to make them more approachable for new developers *and* start
+to use it on the front end. (Fun fact, first prototype of React as written in StandardML)
+---
+
+## Why?
+
+  - Yet another compile to JS language?
+
+  - Better / more expressive type system then Flow / Typescript.
+    - Even less developer overhead (better type inference)
+
+  - Corporate support (Facebook)
+
+  - Excellent FFI / JS interop
+
+  - First class React / React Native support
+
+  - Compiles into very compact and readable Javascript
+
+???
+- more expressive (but also simpler) type system than i.e. Typescript
+- better type inference.   
+  - You can write a fairly complex program w/o writing any type annotations (you will need to write type definitions, but that turns out to be a good design practice)
+- big company support
+- FFI - lots of wrapped libraries - immediate access to a decent part of the javascript ecosystem
+  - if somebody hasn't already written a wrapper for a JS library you need, it's not hard to write one, especially if you just wrap the part of the API you need
+  - generates very efficient and compact JS 
+    - no runtime
+    - eliminates dead code
+
+---
+## A peek at the syntax
+
+- https://reasonml.github.io/en/try
+- https://sketch.sh/new/reason
+
+```ocaml
+
+/* variables */
+let x = 1; /* semicolons are mandatory! */
+let y = "Hello";
+
+/* functions */
+let add = (x, y) => x + y;
+
+let multiply = (x, y) => {
+  x * y;
+};
+
+/* type definitions */
+type userRole = User | Admin | SuperUser;
+type user = {
+  name: string,
+  role: userRole
+};
+
+```
+
+- types, variables and functions are lower camel cased.
+- variant constructors and module names are upper camel cased.
+
+[Try](https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/)
+
+???
+
+- a couple of sandboxes you can use to play around with the language. I've provided links on the slides where possible
+ - the first one is the "official" one and has more libraries available
+ - the second one has a nicer UI, so I use it where possible
+- Let (no let/var/const distinction because all bindings are immutable)
+- mandatory semicolons
+https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/
+
+---
+
+- Expression based
+- Block scoped
+
+```ocaml
+
+let cond = false;
+let x = {
+  if (cond) {
+    20;
+  } else {
+    10;
+  };
+};
+
+/* everything is an expression, but syntax lets you pretend otherwise */
+
+/* string => () */
+Js.log("is this an expression?");
+
+/* syntactic sugar for */
+let _ = Js.log("is this an expression?");
+```
+[Try](https://sketch.sh/s/GUKZUUQjUADsOKVW2qGZSv/)
+
+???
+
+- curlies for multiline expressions (functions, blocks)
+- everything is an expression although there is syntactic sugar that makes it look otherwise
+https://sketch.sh/s/GUKZUUQjUADsOKVW2qGZSv/
+
+---
+## Basic types
+
+- bool
+
+- int
+
+- float
+
+- string
+
+- char
+
+- unit
+
+???
+- unit -> void
+  - return type of functions that "don't return anything" and the single parameter of functions that "don't take any parameters" (we'll see why later)
+- no "magic" polymorphism (all operators are functions too)
+  - different arithmetic operators for int and float
+
+---
+## Containers
+
+- tuple 
+ - 
+  ```ocaml
+  let x: (int, string, char) = (1, "two", '3');
+  ```
+
+- list 
+ - 
+  ```ocaml
+  let y: list(int) = [1, 2, 3];
+  ```
+
+- array 
+ - 
+  ```ocaml
+  let z: array(int) = [|1, 2, 3|];
+  ```
+
+  [Try](https://sketch.sh/s/aaPkpQAWRavG8U6Fy7nzUp/)
+
+???
+- type annotations here are for pedagogical purposes, you probably wouldn't include them in real code.
+- Tuple - heterogeneous, fixed size
+- List - homogeneous, linked list, immutable cells
+- Array - homogeneous, mutable (good for javascript interop)
+
+- use lists unless you need javascript interop or random access (which you need surprisingly rarely)
+
+- all parameterized/polymorphic/generic types (more on that later)
+---
+
+
+## Custom types
+
+```ocaml
+/* variants / sum types */
+type userRole = User | Admin | SuperUser;
+let x = SuperUser;
+
+
+/* product types */
+type contactInfo = ContactInfo(string, string)
+
+/* records */
+type user = {
+  name: string,
+  role: userRole
+};
+
+let u = {
+  name: "John",
+  role: Admin
+};
+
+/* type aliases */
+type zipCode = string;
+type position = (float, float);
+```
+[Try](https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/)
+
+???
+- variants / sum types (more later)
+- product types (more later)
+- records - structurally typed / type inference (must be in scope)
+  - records from other modules
+  - record fields are just regular identifiers, must be brought into scope or fully qualified name used
+- type aliases for documentation only - no compiler checking
+https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/
+---
+
+## Immutability
+
+- bindings are immutable
+  - but shadowing is allowed.
+
+```ocaml
+
+let one = 1;
+
+let add1 = (x) => x + one;
+
+let one = 10;
+
+let sum = add1(1); /* 2 */
+
+```
+
+[Try](https://sketch.sh/s/58dKHnONC5p5G9vejPh1Wh/)
+
+???
+- shadowing allowed (like Elixir)
+- mutable array type for a) efficiency b) js interop
+- mutable reference with `ref`
+- https://sketch.sh/s/58dKHnONC5p5G9vejPh1Wh/
+
+---
+
+## Pattern Matching and Destructuring
+
+```ocaml
+
+let pair = (10, 20);
+
+let (x, y) = pair;
+
+let (10, y) = pair;
+
+let (_, y) = pair;
+
+let (11, y) = pair; /* error */
+
+let first = ((x, _)) => x;
+
+first(pair); /* 10 */
+
+let pair = (true, false);
+
+let or_ = (x) => {
+  switch (x) {
+    | (true, _) => true
+    | (_, true) => true
+    | (_, _) => false
+  };
+};
+
+```
+[Try](https://sketch.sh/s/suor5RapKv60mL8k1iVUnN/)
+???
+- https://reasonml.github.io/en/try?rrjsx=true&reason=DYUwLgBADghglgJwgXggCgIwAYA0EBMWAlANwBQZokaAHngJ5ErTwLmXjrYNOqyLsq6APo9m-NhQD0AKiGYMYvqxIQZU2RBAIEAeyTqKQgGaIAzpFRpaeYUV4A+CDXamEFtBNIRN2NVKNOCWY0MAQAVxA8YxhgMxBSQMh9YRCaRwgAbzIICDMAdzgwAGMAC3R0rJzciAAfdDDI2wzGkGrc+rRRCFaWiLaaupFmlCcYuIGIAF9yGaA
+- https://sketch.sh/s/suor5RapKv60mL8k1iVUnN/
+
+- a _single_ pattern match is just called destructuring, and the pattern needs to be complete or it is runtime error (compile time warning)
+  - you can destructure function arguments
+- otherwise you can use `switch`
+  - compiler makes sure you handle all the cases
+- matches on types or values can fail, matches on names are 'irrefutable'
+- use `_` to mean "anything else". convention is that names that begin w/ `_` are for bindings we'll never use. So it's basically the wild card.
+- for the Elixir-heads, there's no equivalent of the `pin` operator for matching on variables
+
+---
+
+## More Pattern Matching
+
+```ocaml
+
+/* Alternatives */
+
+let xs = (1, 10);
+
+let (1|2|3, y) = xs; 
+/* y == 10 */
+
+/* as keyword */
+
+let (1|2|3, y) as z = xs; 
+/* y == 10, z == (1, 10) */
+
+/* guard clauses */
+let hasAccess ({role, name}) => switch(role) {
+  | User when name == "Joe" => true
+  | User => false
+  | SuperUser => true
+  | Admin => true
+};
+
+```
+[Try](https://sketch.sh/s/bODHWumiUAx4sIowpUVG1G/)
+???
+- https://reasonml.github.io/en/try?rrjsx=true&reason=FAegVABAggNgLgUwE4DsCGcCWA3BBnCMEYYGBOCADwIF4IAKARgBoJGAGASgG4SyKmAHwBMggMysAnpwh1q3COAiTZdDoWKhIaAgGsEkgO4B7JABMNfcg0YjxUmTogAvWVTwKlKmmvatXPjasHDJEJEoA5gCuaOYQAMYwaFF4+Jak1gEQeIaYcPEAFvSUMgDewBAQggxorABGMoYFCCgQaKoQdbIAfBAARAgAjjEwfRVVNfWNza3tADydPf1dmAQRSAgYyGOV1fS1ndMtbRC9XTS9fe2rEOubiEhjAL7cQA
+
+- alternatives
+- "as" for binding to the whole and a part (something I really wish javascript had)
+  - especially useful for function arguments (destructure but also bind a name to the whole thing)
+- guard clauses to express more complex logic
+  - https://reasonml.github.io/en/try?rrjsx=true&reason=DYUwLgBAHhC8EAoCMAaCSAMBKA3AKD1EmQB8AmEgZjQE8s5ocIB6AKghrnkwleYLYQAhgGde-QuERJyVWvVEQAXgyhNBnWNwziCRZQxEB3AJZgAxgAsEUegG88ECCURC0AI3pHLIAHbCuCHc4AD4IACIQAEcAVyFgcMdnVw8vH38hCAAeINCI4JMxAHMAJxAhMBASxKcXBDcgtL8AsODYMPDMwohS8srqvABffDwAKREAOmAAeyKEJVwgA
+- pattern matching is the predominant "conditional" or "control" construct. But there is `if`, `while` and the ternary operator
+  - more on this when we get into ADTs 
+---
+## Functions
+
+```ocaml
+
+/* (int, int) => int */
+let add = (x, y) => x + y;
+
+/* (int, int) => int */
+let multiply = (x, y) => {
+  x * y;
+};
+
+/* int => int */
+let add5 = add(5);
+
+let ten = add5(5);
+
+/* labeled arguments */
+let div = (~dividend, ~divisor) => dividend / divisor;
+
+let quotient = div(~dividend=10, ~divisor=20);
+
+let divWithDefault = (~dividend, ~divisor=10, _) => dividend / divisor;
+
+/* ('a, 'b) => 'a */
+let first = ((x, _)) => x;
+
+```
+
+[Try](https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/)
+???
+- https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/
+- https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAFAlgdgLgGjLOBKMBeAfM+YTABQANgKZxgCGAJtZpAB5ICe62YDYA1GMwNyFCoSCiQo2OFPiJkKAWwCuxOFAAOxZvQhNeEsAG9CYDvl4CAvgKHgp7KQRLkqtAKz0a1CC9RXZYOKQw7q5ePoLCxJQARqRkdJQATgDmCnKBcADO0o4U1FAAbloAfnn5UNSB1EglBVAZAPYJeqXllWDAYC0NCb5OAI4K9Srp9KUQNWUVMNQYAIwADNVdjRgATPNhOZ0FAOpQcAAWACKkAGaUShQYkBOt00u13XOLYAD6zbVTdB3LPYIAUhkAHTEepJCAZOAJWBJV71U6vFAQUp7Q4nc6XcYtL5rF4QVAEzbCCAAckoSBJUT0ZOyflOUASkK02iQ7z0DD4QA
+- javascript "fat" arrow function like syntax
+
+- implicit return
+
+- automatic partial application w/ no special syntax
+
+  - that's why functions take `unit`
+
+- labeled arguments
+
+  - default values
+  
+---
+
+- Recursive functions must be explicitly declared
+
+```ocaml
+/* recursive (and polymorphic) */
+/* ('a => b', list('a)) => list('b) */
+let rec myMap = (f, xs) => {
+  switch (xs) {
+    | [] => []
+    | [h, ...t] => [f(h), ...myMap(f, t)]
+  };
+};
+
+/* pipelines */
+
+let add = (x, y) => x + y;
+
+let z =
+  5 
+  |> add(5) 
+  |> (x) => x * 2; /* 20 */
+
+let someNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+let aFewNumbers = 
+  someNumbers
+  |> myMap(add(5))
+  -> List.shuffle
+  -> List.take(5);
+
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFQegFRQE5gGMBXXAZwEsA3MKACgEMIATKEYeATwFthcQALcgQCUULBkw5aAcnpQAvAD4oAI2kAaKPHKlEM+sNFKtOvdJWjxqeGER5CULhwCy9EAroAzTQA9SR5QBvVCgoUgB3ckQCfjo-UWDQ0IAfKABtAF0FZUyQpNS0-k0AOlLELOM0z1p+YRLSp1cQWm8oRGEMvIBfNB70bFZycG0IMFIxCWtbKHomFnk4zQ4AqB8oAGooDjQpuwAvBTyAVig85OVZploj0TPlWh8VtZwAJmQoAZeABgn0GztSMAuGAAHJELgqMBkDxpACMmhemgAzJoACyaI6aABsmgA7JoAByaACcmlhXwyaH+MwAYmBwmCIVDxgs8oDgYzIWQ7o4XG4GHNroYzsUoAAZUzFUj8IieTw2EXiyWIegAazAQrQQA)
+???
+- recursive functions (help the compiler)
+ - if a function refers to itself it needs to have the `let rec`
+
+- pipelines
+
+- two different "pipe" operators
+  - `|>` passes the left hand side as the _last_ parameter of the right hand side.
+  - `|.` passes it as the first (a la elixir) (actually I think they *just* changed this to ->)
+  - `|>` is just a function (`let (|>): ('a, 'a => 'b) => 'b;`)
+  - `|. ->` is preprocessor magic
+  - equivalent for functions of 1 parameter
+  - which one you need depends on what you're doing and how the API you are using is designed
+    - wrapping OO JS apis a common pattern is to basically make the `this` the first argument, so for translating chanining method calls you use the `|.` or `->`.
+    - the OCaml stdlib (Pervasives) such as it is tends to use the functional idiom of `data last`, so you need `|>`
+    - *but* the new ReasonML specific stdlib that is in progress (Belt) is "data first".
+    - This is part of the stdlib mess
+---
+## Modules
+- Basic unit of code organization
+- Files are implicitly modules
+- Can explicitly define sub (and sub-sub etc.) modules
+- Modules are namespaces and more!
+
+```ocaml
+/* OurFirstProgram.re */
+let greeting = "Hello Lab Zero";
+
+let say = (message) => Js.log(message);
+
+say(greeting);
+
+/* AnotherFile.re */
+open OurFirstProgram;
+
+say("something else");
+```
+
+???
+- no equivalent of `main`.
+- you compile a module, and it transitively compiles its dependencies
+- can't have circular dependencies (unlike ES6)
+- no selective imports (another bone for the compiler), stuff is either in scope or not.
+- global `open` should be done very sparingly. (standard libraries etc.) - namespace pollution
+---
+
+```ocaml
+/* YetAnotherFile.re */
+
+OurFirstProgram.say("local open")
+
+let OurFirstSubmodule = {
+  OurFirstProgram.({
+    say("here we are...");
+    say("multi line local open");
+  });
+
+  {
+    open OurFirstProgram;
+    say("block scoped open");
+  };
+};
+```
+???
+- local open
+---
+## Interfaces
+
+  - By default modules export everything
+  - To control access, explicitly define an interface
+
+```ocaml
+/* OurFirstProgram.rei /*
+
+let say: string => ();
+
+```
+
+- for submodules you can define the interface inline
+
+```ocaml
+module Foo: {
+  let foo: (int) => string;
+} = {
+  let x = 10;
+  let foo = (y) => string_of_int(y + x) 
+};
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWAXOAM2TQAoBLAOzwEo4BeAPjgGc8AnKgcwG5MBfBhmy4YBAB5CAjAAY+OfEWRDSATzpNWHbgH0QhHVTxq4Aajji6AvpgAOnajpiUwUKjFJIQAOmIhSAEwyNDRAA)
+???
+https://sketch.sh/s/4H3nJczgxefONrUjqnkU7K/
+https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWAXOAM2TQAoBLAOzwEo4BeAPjgGc8AnKgcwG5MBfBhmy4YBAB5CAjAAY+OfEWRDSATzpNWHbgH0QhHVTxq4Aajji6AvpgAOnajpiUwUKjFJIQAOmIhSAEwyNDRAA
+- for file level / top level modules, define an interface in an .rei file
+- for submodules you can define the interface inline
+- you can also define standalone 'module types' i.e. interfaces, which can be implemented by more than one concerete module, but we'll get to that later
+---
+
+### Algebraic Data Types
+
+- Model your domain by building up types that represent it from simple building blocks
+
+- Sums and Products
+
+```ocaml
+
+/* sum type */
+type role = User | SuperUser | Admin;
+
+type option('a) = Some('a) | None;
+
+type result('a, 'b) = Ok('a) | Error('b);
+
+/* product type */
+type pair('a, 'b) = ('a, 'b);
+
+type user = {
+  name: string,
+  email: string
+};
+
+/* getUser: (email) => option(user) */
+/* getUser: (email) => either(user, string) */
+
+type badUser = pair(string, string);
+```
+[Try](https://sketch.sh/s/UcW7AMaKeril5YJsssH4oC/)
+???
+https://sketch.sh/s/UcW7AMaKeril5YJsssH4oC/
+https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnSFk8AYSEAKAOQBDAJRgKTQjFTL1XAHLzUYiXnypoxePoA0YJQCMNFAPIBrfRsYBRfET4yi5moGDIRLxQAMbwCJIY2OboyCoCQaoOzq5g9o4h4rjoUDR0FADeWGBgQiq6AFyQ8PjCAOZ2VWCoMGnEjRDNbVgAvqHgrajwHPiNCt29rgB8YNKy8goltBqYWGETU6Wz8wLES10C8AAWtBulDgMtQq3bSUVgTiq805rhaUEPbXugyeahEQA
+- sum types: also known as variants, tagged unions, discriminated unions etc.
+- sum types without parameters are basically Enums
+- boolean is a sum type
+   - usually better to use a custom sum type than boolean (boolean blindness)
+- But variants can also carry a payload, which makes them very expressive.
+- tuples and records are product types (equivalent except for the field names)
+
+- sum => each _thing_ adds one value to the type. the elements of the type are the _sum_ of the things between the pipes
+- product => the elements of the type is the cartesian product of the elements of the constituent types
+- type constructors vs data constructors (type world vs value world)
+- record constructors are implicit, types are inferred (locally)
+---
+
+- Combine them in all sorts of ways
+
+```ocaml
+
+type role = User | SuperUser | Admin;
+
+type user = {
+  name: string,
+  email: string,
+  role: role,
+};
+
+type siteUser = Anonymous | LoggedIn(user);
+
+```
+
+- define them recursively
+
+```ocaml
+
+type myList('a) = Nil | Cons('a, myList('a));
+
+type author = {
+  name: string,
+  posts: list(post)
+} 
+and post = {
+  title: string,
+  body: string,
+  author: author
+};
+
+```
+[Try](https://sketch.sh/s/X33Np67pJ4qFzCF1W8M0xL/)
+???
+https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnRQadCgG8sYMEICGMVAC5I8fMIDmAGkVhUMFQOJaIO-UaVFSWh6iMBfMRLwQB8VB1k8QoRCiDCE0lwAMoR6eqi8AJJCABTStACUHrjoMIiRAtbJAOQq6WAUAHIWXADCwRDFKgZgufmFJemZ4tlgKlDwABaEAQpKqupWNkKGxsiE1hBaxAXwyXPW6ViuYFgqQrxg6-DlYKMIPo7autN2YABGhLyIk9czSn2Dw1ofQ-hbIkA
+https://sketch.sh/s/X33Np67pJ4qFzCF1W8M0xL/
+---
+## Function types
+
+```ocaml
+type jsonDecoder('a) = string => 'a;
+
+type apiEndpoint('a) = {
+  url: string,
+  decoder: jsonDecoder('a)
+};
+
+type mapper('a, 'b) = ('a => 'b) => list('a) => list('b);
+
+```
+[Try](https://sketch.sh/s/OsPbN1WWw6i0lN3tlOaDZd/)
+???
+https://sketch.sh/s/OsPbN1WWw6i0lN3tlOaDZd/
+- particularly useful when you're defining module types / interfaces (example later)
+---
+### Pattern matching ADTs
+```ocaml
+/* match sum types on their constructors */
+/* destructure records */
+type user = {
+  name: string,
+  email: string,
+  role: role,
+}
+
+type siteUser = Anonymous | LoggedIn(user)
+
+let message = (user) => {
+  switch(user) {
+    | Anonymous => "Please Register"
+    | LoggedIn({name}) => "Hello " ++ name
+  };
+};
+```
+
+[Try](https://sketch.sh/s/sWUHmUMXcPO2sjGMYbAjYo/)
+???
+- https://sketch.sh/s/sWUHmUMXcPO2sjGMYbAjYo/
+- https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBATg9gG2gXigVQM4RlAPlAZQFdIZNs8oBBAEwFsBLAOwG4AoNgegCoo6BDYAGMAFlAxE6UUJAxQ4TaSIgMcQhRmAwiQ4HBhzunLrxoRN23URjQb6mDUPG2M6ESw5UAbzZQoTfjoIAC5xLWYAcwAaXygIAQYEUItImL94JFCMiBiAX3YXcGgMBmAIck9qJgUQOjh3SgAZOAiIiBoASSYACndsAEoCpGA+cwx+NqhUXo9+qYA+KB8-DAB3UtEZgaXYv3wqaqZa+rlkRYAiAAUkfiwoACUICIZNbHPdppa2zp6vAKDcnMzlBzgAJCAIBBwEFQADUsP8gQgsXybFRJigADMiExdAwFNIilAjIVIFAAFYYBQAEQg6jMMG6AHJ+ECwjBIgsoCyCq4oPwwAwAKJMGhgODMYDM1lTHZ+axJdmpWJmenYUKUml0uAM6X9NEsIA
+---
+## Why ADTs are great
+
+- use the `option` type to model
+  - optional parts of a domain object
+
+```ocaml
+type user = {
+  name: string,
+  nickname: option(string)
+};
+
+let screenName = ({name, nickname}) => {
+  switch(nickname) {
+    | Some(x) => x
+    | None => name
+  }
+};
+
+let screenName2 = ({name, nickname}) => 
+  Option.getWithDefault(nickname, name);
+  
+/* user => option(bool) */
+let isFirstCharAscii = ({nickname}) => {
+  nickname
+  -> Option.flatMap(Js.String.codePointAt(0))
+  -> Option.map(x => x > 127);
+};  
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACo8QhI86VkFACNgYHhnTfXtXShOfABRTh4-RABhPzoiAEFyzk566xLVopNzhewhJiCAC0bl6-QgA2m8DoiAAsnQQPIAFL4AYxDjcHgDYTAAAmYAACsBuIgvoh5AB2FRqGgwqBww4DBgYpLtRJQNwARhqTLQmnQQA)
+
+???
+- https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACo8QhI86VkFACNgYHhnTfXtXShOfABRTh4-RABhPzoiAEFyzk566xLVopNzhewhJiCAC0bl6-QgA2m8DoiAAsnQQPIAFL4AYxDjcHgDYTAAAmYAACsBuIgvoh5AB2FRqGgwqBww4DBgYpLtRJQNwARhqTLQmnQQA
+
+- option
+  - here nickname is not required
+  - two examples of how you'd use this in application code
+  - map and flatMap - you can chain operations on a value that might not exist and not worry about it until the end.
+  - there is special syntax for option(al) arguments to functions
+---
+
+- computations that might "fail"
+
+```ocaml
+/* (int, int) => option(int) */
+let safeDivide = (x, y) => {
+  switch(y) {
+    | 0 => None
+    | _ => Some(x / y)
+  };
+};
+
+/* list('a') => option('a) */
+let safeHead = (xs) => {
+  switch(xs) {
+    | [] => None
+    | [h, ..._t] => Some(h)
+  };
+};
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACpLbkQ7XZS3aVkFA6hN9e1dNjppsAnOADdOABNcy0S7TEP3Gi8ffzyb6-CLRAAM7WyEDAGSg0QA+u04glElB1lBvoU0Jp0KUbncABJgOgveqJfA-cJsby+ALksKw6IAbQAupCcoyoEy-HYBnz4Yg2XlkWB5H41DQcTigA)
+???
+- https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACpLbkQ7XZS3aVkFA6hN9e1dNjppsAnOADdOABNcy0S7TEP3Gi8ffzyb6-CLRAAM7WyEDAGSg0QA+u04glElB1lBvoU0Jp0KUbncABJgOgveqJfA-cJsby+ALksKw6IAbQAupCcoyoEy-HYBnz4Yg2XlkWB5H41DQcTigA
+---
+
+- use an `either` or `result` type to model computations that might fail *and* return additional information about the failure.
+
+```ocaml
+
+type result('a, 'b) = Ok('a) | Error('b);
+
+type HttpGetError = NotFound | UnAuthorized | Forbidden | Other(int);
+
+type fetchResult = result(string, HttpGetError);
+
+/* (int) => HttpGetError /*
+let errorFromStatus = status => {
+  switch(status) {
+    | 404 => NotFound
+    | 401 => NotAuthorized
+    | 403 => Forbidden
+    | other => Other(other)
+  }
+};
+
+/* (string) => fetchResult */
+let getUser = (url) => {
+  Fetch.fetch(url)
+  |> Js.Promise.then_(response => {
+    (response.status == 401) ? 
+      Ok(response.text) : 
+      errorFromStatus(response.status);
+  })
+  |> Js.Promise.resolve
+};
+
+```
+???
+
+
+- result
+  - compiler makes you handle both clauses
+- there's also map and flatMap for result
+
+---
+
+- Use a custom sum type to model the routes of your React app
+
+```ocaml
+
+type route = 
+    Home(userId)
+  | Login
+  | Register
+  | Posts
+  | Post(postId) 
+  | NewPost
+  | EditPost(postId)
+  | Profile(userId)
+
+```
+
+???
+- this is actually how routing works in ReasonReact
+- route is part of the state of your top level component and there's a big switch that dispatches to all the individual pages.
+- can't forget one
+
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBATg9gV2NAvFAUFLUAScC2EAFAM7AwCWAdgOYCUmUAPlADJw3WMsBKEnZCDG5QACnDIkR4sqXLV6GLCwByEAO4zgIgKIATCsC1zKtBsrHwAZhQA2xMqfpA)
+
+---
+
+- Use a custom sum type to make sure you handle all the possible states of a process like fetching data from an API
+
+```ocaml
+
+type apiData('a, 'b) =
+    NotRequested
+  | Loading
+  | Success('a)
+  | Error('b);
+
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAhmCWARGwYAoDkMA0UMCMBKKAXgCgpKoA5Ae2ACUIBHAVwgGdgIATCqAD5QAMrRg94AOwDm-IQGVWAYyWcOmGITlQAogCc9tPZiIBuIA)
+???
+- Another React pattern
+---
+
+## Simple wrapper types
+
+- Give you a lot of type safety fairly cheaply
+
+```ocaml
+
+type username = Username(string);
+type email = Email(string);
+
+type user = {
+  username: username,
+  email: email
+};
+
+let userByEmail = (Email(email)) => {
+  /* ... */
+}
+
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBArgzhATgOwIYFtoF4oFUEoYQAUcwiAlsgOYCUA3AFCiRQTqoUA2UOAoh26lyVOk2bho8JLygBvRlFgE0mAFzKkqiABpFbQVw3tOXRgF9xXCME2IAQiAGnZxZ0JPdatXgD55+gD0AFRQAHQRUMGBFkA)
+???
+- makes it harder to pass the wrong parameter to a function, but we can get fancier.
+
+---
+## Enforce more complex invariants
+
+```ocaml
+
+type email = Email(string);
+
+type phoneNumber = PhoneNumber(string);
+
+type contactInfo = 
+    Email(email)
+  | Phone(phone)
+  | Both(email, phone);
+
+type user = {
+  name: string,
+  contactInfo
+};
+
+```
+
+[Try](https://sketch.sh/s/4jKDdw9bOxTdfZfR5ij7Wr/)
+???
+- enforcing that a  user must have email or phone or both
+
+---
+## Abstract/Opaque types
+```ocaml
+
+type result('a, 'b) = Ok('a) | Error('b);
+
+module Email : {
+  type validatedEmail;
+  let getEmail: (validatedEmail) => string;
+  let validateEmail: (string) => result(validatedEmail, string);
+} = {
+  type validatedEmail = ValidatedEmail(string);
+  let validateEmail = (email) => {
+	switch (String.contains(email, '@')) {
+      | true => Ok(ValidatedEmail(email))
+      | false => Error("this is not a valid email")
+    };
+  };
+  let asString = (ValidatedEmail(email)) => email;
+};
+
+type user = {
+  name: string,
+  email: Email.validatedEmail
+};
+
+```
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAThDOBXANsAFAcgIYBooYCMBKKAXigHkBrTLEgHygFEYYB7GTYgbgCheAtmwAmKaEwFYAlsigAuKAG9eUKKEhQAblmRThWYBGETpyPquQRgUAOZWTMhWm279h45JklSAPijxgGCkAOxtzKEtrFz0DCAdkJwCg0O8-OCRUZx0Y93i8JJCbIj4AXzIlFTVwaGi3I3jygDVsuo9TNAKU8MitFtiG8jQIT2RUioBIeAB3KWAAYwALKDQAZUDCgDo5tmDgaWD4IZG8DAABDCISZVUbqEZAxGhfShpm11i2mSPTS8rbxgAZjp4E8-Cx2JwAETABZSeBQOFQYJsaxYXquKDDUyQoh-KAlcIEyo9OzAAbLN45eojb5eMZYmSlPi8dTQRAgmDla5IrACCAKTo2HCVBkJZgjDa1D7xXgEoA)
+
+???
+- Hide the constructor to enforce more complex rules. (also possible in OO, but here's its even lighterweight)
+- Can't create one, forced to handle the case where it fails to validate
+---
+
+## An Example
+
+
+---
+### Advanced Modules
+
+- Extending modules with `include`
+
+```ocaml
+/* DateExtensions.re */
+module Date = {
+  include Date;
+
+  let toStardate = (date) => {
+    /* .... */
+  };
+};
+
+/* MyApp.re */
+open DateExtensions;
+
+Js.log(Date.toStardate(Date.now()));
+
+```
+???
+- both brings the contents of the module into the local namespace but also "re-exports" them
+- can be used for both "mixin" like functionality or (as above) to "extend" other modules for your own purposes.
+- not exactly monkey-patching since it doesn't change the global definition of 'Date'
+
+---
+### Functors
+
+- Higher order modules
+
+- [An example too long for a slide](https://sketch.sh/s/mXQIhGfoUpopLPJyTDlz7s/GIVwdgxgLg9gTgZyA---N4IgRgNg9gxg1gZxALgNqgJYBMUgEoDCADmEVgIYCMALgkQFoFwCqRAdgF54CseA7iAA0ICtXIpQcDGxzIQMKFgCmQkADdyEAK4q5AW0VaISgATUAnkVMBlLXr3lIpgLwngAHTYmzl09QDcnt7G1CYcSgBOUMhmgV4mISbkWFgxoc4AfGYmmbGeAL5xngZYRjZ2OW5BJiVlJgCy5HAuJgAUAKLGekpstDG29o7GAJQ5WR7xwUqhEUowJggVrgBmWl7V3t4APiaoALpjJp1K3b0IAHThURubO6gAHoIm5y-3CAe5x6e058lYrY8FnYAQhhqNNt5qvkCkU2LVjCYAJK9AaVAbnRrNVoTbwWKzZVzSALVRJXKCVAAMcSmoT+lQBT3Mo1y9xMAGoTOY4vlhrCiBEiQB9HpYCDSJStBDUAVsADmgqgy0FRNayOo6MWelaqEoggATIIAMyCAAsezBvM8njxpgUeiIxlZrhxJlmmhiRME1QwDll0nIEXMHt6MKtbESUpl8sVyt9-sDlSd42qTtclBMAH4TO4QBgcyYYpHpNGlSr7qM2Ryc3mQNzYRHpcWFUq7Q6lE62sBXUpNE8feQ-WwA+YTDzDi6EHwMNQYAALVqtN0QPtxoeBsFVeI7VoUvvMrJFuXN2MD+PmVoYYbVbcRJ4U-cLRtHmMqiJXrdtW8mS+HQ8l5W9IuFZViA7LZqBlaPlGx79oOw4Xu+3jQmwhRhvCpgEFA9qOqirjopiEoujaBImK2jrUgk0xhJE5LOkuMS7t+q7DgxqHxIkdKuK05BPGAD4ut49FJOcS5gWAIk9suNywWeMTkOcMlriOHLiYpw5QtylpsJ4iRke2AAyGBSpUqDVMAQm6kxp5KTEer5F68TmZJMQALTGlZcGBq5lD2WZQkmiu1ksSY3DIXs9ZUXp9y4SYmHYe2GrAlFhlSlpnj8kKIpimwEp-seUWtFFAxgrCnggPk+R7PkQA)
+
+???
+- for example Maps and Sets are implemented as Functors since you need to provide (at least) an equality method
+for either your keys or values.
+
+</textarea>
+  <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+  </script>
+  <script>
+    var slideshow = remark.create();
+  </script>
+</body>
+
+</html>
