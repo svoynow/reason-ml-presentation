@@ -244,6 +244,7 @@ let x = SuperUser;
 
 /* product types */
 type contactInfo = ContactInfo(string, string)
+let y = ContactInfo("5105551212", "joe@example.com")
 
 /* records */
 type user = {
@@ -508,7 +509,7 @@ say("something else");
 
 OurFirstProgram.say("local open")
 
-let OurFirstSubmodule = {
+module OurFirstSubmodule = {
   OurFirstProgram.({
     say("here we are...");
     say("multi line local open");
@@ -571,6 +572,7 @@ type result('a, 'b) = Ok('a) | Error('b);
 
 /* product type */
 type pair('a, 'b) = ('a, 'b);
+type newPair('a, 'b) = Pair('a, 'b);
 
 type user = {
   name: string,
@@ -578,23 +580,26 @@ type user = {
 };
 
 /* getUser: (email) => option(user) */
-/* getUser: (email) => either(user, string) */
+/* getUser: (email) => result(user, string) */
 
 type badUser = pair(string, string);
 ```
-[Try](https://sketch.sh/s/UcW7AMaKeril5YJsssH4oC/)
+[Try](https://sketch.sh/s/yymJlMBVTP3IAxojfmZmPe/)
 ???
-https://sketch.sh/s/UcW7AMaKeril5YJsssH4oC/
-https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnSFk8AYSEAKAOQBDAJRgKTQjFTL1XAHLzUYiXnypoxePoA0YJQCMNFAPIBrfRsYBRfET4yi5moGDIRLxQAMbwCJIY2OboyCoCQaoOzq5g9o4h4rjoUDR0FADeWGBgQiq6AFyQ8PjCAOZ2VWCoMGnEjRDNbVgAvqHgrajwHPiNCt29rgB8YNKy8goltBqYWGETU6Wz8wLES10C8AAWtBulDgMtQq3bSUVgTiq805rhaUEPbXugyeahEQA
+https://sketch.sh/s/yymJlMBVTP3IAxojfmZmPe/
+https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnSFk8AYSEAKAOQBDAJRgKTQjFTL1XAHLzUYiXnypoxePoA0YJQCMNFAPIBrfRsYBRfET4yi5moGDIRLxQAMbwCJIY2OboyCoCQaoOzq5g9o4hyWBCqADuAAppGSpZLppgFel52Wa46FA0dBQA3lhgRSq6AFyQ8PjCAOZ2vWCoMGnEwxCjE1gAvqHg46jwHPjDCrPzrgB8YNKy8grttBqYWGFbOx37hwLEJzMC8AAWtFcdDiWYyE41uSVaYCcKl4uzqqUaQImgOWILUIiAA
 - sum types: also known as variants, tagged unions, discriminated unions etc.
 - sum types without parameters are basically Enums
 - boolean is a sum type
    - usually better to use a custom sum type than boolean (boolean blindness)
 - But variants can also carry a payload, which makes them very expressive.
+ - and that payload can be generic - type variables
+ - that's why it's called a "type constructor" there are no values of type `option('a)` or `list('a)`
 - tuples and records are product types (equivalent except for the field names)
 
 - sum => each _thing_ adds one value to the type. the elements of the type are the _sum_ of the things between the pipes
 - product => the elements of the type is the cartesian product of the elements of the constituent types
+  - really explicit in OCaml where the syntax is `a * b`
 - type constructors vs data constructors (type world vs value world)
 - record constructors are implicit, types are inferred (locally)
 ---
