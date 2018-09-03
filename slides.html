@@ -503,50 +503,6 @@ https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWA
 
 - all parameterized/polymorphic/generic types (more on that later)
 ---
-## Custom types
-
-```ocaml
-/* variants / sum types */
-type userRole = User | Admin | SuperUser;
-let x = SuperUser;
-
-
-/* product types */
-type contactInfo = ContactInfo(string, string)
-let y = ContactInfo("5105551212", "joe@example.com")
-
-/* records */
-type user = {
-  name: string,
-  role: userRole
-};
-
-let u = {
-  name: "John",
-  role: Admin
-};
-
-/* type aliases */
-type zipCode = string;
-type position = (float, float);
-```
-[Try](https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/)
-
-???
-- variants / sum types (more later)
-- product types (more later)
-- type constructor vs data constructor.
-  - list(string) - type
-  - contactInfo - type (no parameters)
-  - User - data / value (no parameters)
-  - ContactInfo("blah", "blah") - data / value - two parameters
-- records - structurally typed / type inference (must be in scope)
-  - records from other modules
-  - record fields are just regular identifiers, must be brought into scope or fully qualified name used
-- type aliases for documentation only - no compiler checking
-https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/
-
----
 ### Algebraic Data Types
 
 - Model your domain by building up types that represent it from simple building blocks
@@ -635,7 +591,7 @@ type siteUser = Anonymous | LoggedIn(user);
 /* getUser: (email) => result(user, string) */
 
 ```
-[Try] https://sketch.sh/s/rXZLSkopgxOZWyzQgjOdvW/
+[Try](https://sketch.sh/s/rXZLSkopgxOZWyzQgjOdvW/)
 ???
 - sums of products of sums of sums of products etc.
 
