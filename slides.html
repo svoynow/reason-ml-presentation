@@ -64,9 +64,6 @@ class: center, middle
 
 - Reason 
     - Facebook has a bunch of tooling written in OCaml
-          - Hack
-          - Flow
-          - Infer
     - Wanted to make OCaml more approachable for more developers.
     - w/ Bucklescript, can be used in place of Javascript for front-end work
       - ReasonReact
@@ -78,26 +75,22 @@ class: center, middle
 to use it on the front end. (Fun fact, first prototype of React as written in StandardML)
 ---
 
-## Why?
-
-  - Yet another compile to JS language?
+## Yet another compile to JS language?
 
   - Better / more expressive type system then Flow / Typescript.
     - Even less developer overhead (better type inference)
 
-  - Corporate support (Facebook)
+  - Corporate support
 
   - Excellent FFI / JS interop
 
   - First class React / React Native support
 
-  - Compiles into very compact and readable Javascript
-
 ???
 - more expressive (but also simpler) type system than i.e. Typescript
 - better type inference.   
   - You can write a fairly complex program w/o writing any type annotations (you will need to write type definitions, but that turns out to be a good design practice)
-- big company support
+- big company support (ast least some)
 - FFI - lots of wrapped libraries - immediate access to a decent part of the javascript ecosystem
   - if somebody hasn't already written a wrapper for a JS library you need, it's not hard to write one, especially if you just wrap the part of the API you need
   - generates very efficient and compact JS 
@@ -131,10 +124,6 @@ type user = {
 };
 
 ```
-
-- types, variables and functions are lower camel cased.
-- variant constructors and module names are upper camel cased.
-
 [Try](https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/)
 
 ???
@@ -144,6 +133,9 @@ type user = {
  - the second one has a nicer UI, so I use it where possible
 - Let (no let/var/const distinction because all bindings are immutable)
 - mandatory semicolons
+- types, variables and functions are lower camel cased. (more on types later)
+- variant constructors and module names are upper camel cased.
+
 https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/
 
 ---
@@ -179,98 +171,96 @@ let _ = Js.log("is this an expression?");
 https://sketch.sh/s/GUKZUUQjUADsOKVW2qGZSv/
 
 ---
-## Basic types
+## Functions
+```ocaml
+/* (int, int) => int */
+let add = (x, y) => x + y;
 
-- bool
+/* (int, int) => int */
+let multiply = (x, y) => {
+  x * y;
+};
 
-- int
+/* int => int */
+let add5 = add(5);
 
-- float
+let ten = add5(5);
 
-- string
+/* labeled arguments */
+let div = (~dividend, ~divisor) => dividend / divisor;
 
-- char
+let quotient = div(~dividend=10, ~divisor=20);
 
-- unit
+let divWithDefault = (~dividend, ~divisor=10, _) => dividend / divisor;
 
+/* ('a, 'b) => 'a */
+let first = ((x, _)) => x;
+
+```
+
+[Try](https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/)
 ???
-- unit -> void
-  - return type of functions that "don't return anything" and the single parameter of functions that "don't take any parameters" (we'll see why later)
-- no "magic" polymorphism (all operators are functions too)
-  - different arithmetic operators for int and float
+- https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/
+- https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAFAlgdgLgGjLOBKMBeAfM+YTABQANgKZxgCGAJtZpAB5ICe62YDYA1GMwNyFCoSCiQo2OFPiJkKAWwCuxOFAAOxZvQhNeEsAG9CYDvl4CAvgKHgp7KQRLkqtAKz0a1CC9RXZYOKQw7q5ePoLCxJQARqRkdJQATgDmCnKBcADO0o4U1FAAbloAfnn5UNSB1EglBVAZAPYJeqXllWDAYC0NCb5OAI4K9Srp9KUQNWUVMNQYAIwADNVdjRgATPNhOZ0FAOpQcAAWACKkAGaUShQYkBOt00u13XOLYAD6zbVTdB3LPYIAUhkAHTEepJCAZOAJWBJV71U6vFAQUp7Q4nc6XcYtL5rF4QVAEzbCCAAckoSBJUT0ZOyflOUASkK02iQ7z0DD4QA
+- javascript "fat" arrow function like syntax
 
----
-## Containers
+- implicit return
 
-- tuple 
- - 
-  ```ocaml
-  let x: (int, string, char) = (1, "two", '3');
-  ```
+- automatic partial application w/ no special syntax
 
-- list 
- - 
-  ```ocaml
-  let y: list(int) = [1, 2, 3];
-  ```
+- labeled arguments
 
-- array 
- - 
-  ```ocaml
-  let z: array(int) = [|1, 2, 3|];
-  ```
-
-  [Try](https://sketch.sh/s/aaPkpQAWRavG8U6Fy7nzUp/)
-
-???
-- type annotations here are for pedagogical purposes, you probably wouldn't include them in real code.
-- Tuple - heterogeneous, fixed size
-- List - homogeneous, linked list, immutable cells
-- Array - homogeneous, mutable (good for javascript interop)
-
-- use lists unless you need javascript interop or random access (which you need surprisingly rarely)
-
-- all parameterized/polymorphic/generic types (more on that later)
+  - default values
+  
 ---
 
-
-## Custom types
+- Recursive functions must be explicitly declared
 
 ```ocaml
-/* variants / sum types */
-type userRole = User | Admin | SuperUser;
-let x = SuperUser;
-
-
-/* product types */
-type contactInfo = ContactInfo(string, string)
-let y = ContactInfo("5105551212", "joe@example.com")
-
-/* records */
-type user = {
-  name: string,
-  role: userRole
+/* recursive (and polymorphic) */
+/* ('a => b', list('a)) => list('b) */
+let rec myMap = (f, xs) => {
+  switch (xs) {
+    | [] => []
+    | [h, ...t] => [f(h), ...myMap(f, t)]
+  };
 };
 
-let u = {
-  name: "John",
-  role: Admin
-};
+/* pipelines */
 
-/* type aliases */
-type zipCode = string;
-type position = (float, float);
+let add = (x, y) => x + y;
+
+let z =
+  5 
+  |> add(5) 
+  |> (x) => x * 2; /* 20 */
+
+let someNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+let aFewNumbers = 
+  someNumbers
+  |> myMap(add(5))
+  -> List.shuffle
+  -> List.take(5);
+
 ```
-[Try](https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/)
-
+[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFQegFRQE5gGMBXXAZwEsA3MKACgEMIATKEYeATwFthcQALcgQCUULBkw5aAcnpQAvAD4oAI2kAaKPHKlEM+sNFKtOvdJWjxqeGER5CULhwCy9EAroAzTQA9SR5QBvVCgoUgB3ckQCfjo-UWDQ0IAfKABtAF0FZUyQpNS0-k0AOlLELOM0z1p+YRLSp1cQWm8oRGEMvIBfNB70bFZycG0IMFIxCWtbKHomFnk4zQ4AqB8oAGooDjQpuwAvBTyAVig85OVZploj0TPlWh8VtZwAJmQoAZeABgn0GztSMAuGAAHJELgqMBkDxpACMmhemgAzJoACyaI6aABsmgA7JoAByaACcmlhXwyaH+MwAYmBwmCIVDxgs8oDgYzIWQ7o4XG4GHNroYzsUoAAZUzFUj8IieTw2EXiyWIegAazAQrQQA)
 ???
-- variants / sum types (more later)
-- product types (more later)
-- records - structurally typed / type inference (must be in scope)
-  - records from other modules
-  - record fields are just regular identifiers, must be brought into scope or fully qualified name used
-- type aliases for documentation only - no compiler checking
-https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/
+- recursive functions (help the compiler)
+ - if a function refers to itself it needs to have the `let rec`
+
+- pipelines
+
+- two different "pipe" operators
+  - `|>` passes the left hand side as the _last_ parameter of the right hand side.
+  - `|.` passes it as the first (a la elixir) (actually I think they *just* changed this to ->)
+  - `|>` is just a function (`let (|>): ('a, 'a => 'b) => 'b;`)
+  - `|. ->` is preprocessor magic
+  - equivalent for functions of 1 parameter
+  - which one you need depends on what you're doing and how the API you are using is designed
+    - wrapping OO JS apis a common pattern is to basically make the `this` the first argument, so for translating chanining method calls you use the `|.` or `->`.
+    - the OCaml stdlib (Pervasives) such as it is tends to use the functional idiom of `data last`, so you need `|>`
+    - *but* the new Reason specific stdlib that is in progress (Belt) is "data first".
+    - This is part of the stdlib mess
 ---
 
 ## Immutability
@@ -312,7 +302,7 @@ let (10, y) = pair;
 
 let (_, y) = pair;
 
-let (11, y) = pair; /* error */
+let (11, y) = pair; /* runtime error */
 
 let first = ((x, _)) => x;
 
@@ -380,107 +370,12 @@ let hasAccess ({role, name}) => switch(role) {
   - https://reasonml.github.io/en/try?rrjsx=true&reason=DYUwLgBAHhC8EAoCMAaCSAMBKA3AKD1EmQB8AmEgZjQE8s5ocIB6AKghrnkwleYLYQAhgGde-QuERJyVWvVEQAXgyhNBnWNwziCRZQxEB3AJZgAxgAsEUegG88ECCURC0AI3pHLIAHbCuCHc4AD4IACIQAEcAVyFgcMdnVw8vH38hCAAeINCI4JMxAHMAJxAhMBASxKcXBDcgtL8AsODYMPDMwohS8srqvABffDwAKREAOmAAeyKEJVwgA
 - pattern matching is the predominant "conditional" or "control" construct. But there is `if`, `while` and the ternary operator
   - more on this when we get into ADTs 
----
-## Functions
 
-```ocaml
-
-/* (int, int) => int */
-let add = (x, y) => x + y;
-
-/* (int, int) => int */
-let multiply = (x, y) => {
-  x * y;
-};
-
-/* int => int */
-let add5 = add(5);
-
-let ten = add5(5);
-
-/* labeled arguments */
-let div = (~dividend, ~divisor) => dividend / divisor;
-
-let quotient = div(~dividend=10, ~divisor=20);
-
-let divWithDefault = (~dividend, ~divisor=10, _) => dividend / divisor;
-
-/* ('a, 'b) => 'a */
-let first = ((x, _)) => x;
-
-```
-
-[Try](https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/)
-???
-- https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/
-- https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAFAlgdgLgGjLOBKMBeAfM+YTABQANgKZxgCGAJtZpAB5ICe62YDYA1GMwNyFCoSCiQo2OFPiJkKAWwCuxOFAAOxZvQhNeEsAG9CYDvl4CAvgKHgp7KQRLkqtAKz0a1CC9RXZYOKQw7q5ePoLCxJQARqRkdJQATgDmCnKBcADO0o4U1FAAbloAfnn5UNSB1EglBVAZAPYJeqXllWDAYC0NCb5OAI4K9Srp9KUQNWUVMNQYAIwADNVdjRgATPNhOZ0FAOpQcAAWACKkAGaUShQYkBOt00u13XOLYAD6zbVTdB3LPYIAUhkAHTEepJCAZOAJWBJV71U6vFAQUp7Q4nc6XcYtL5rF4QVAEzbCCAAckoSBJUT0ZOyflOUASkK02iQ7z0DD4QA
-- javascript "fat" arrow function like syntax
-
-- implicit return
-
-- automatic partial application w/ no special syntax
-
-  - that's why functions take `unit`
-
-- labeled arguments
-
-  - default values
-  
----
-
-- Recursive functions must be explicitly declared
-
-```ocaml
-/* recursive (and polymorphic) */
-/* ('a => b', list('a)) => list('b) */
-let rec myMap = (f, xs) => {
-  switch (xs) {
-    | [] => []
-    | [h, ...t] => [f(h), ...myMap(f, t)]
-  };
-};
-
-/* pipelines */
-
-let add = (x, y) => x + y;
-
-let z =
-  5 
-  |> add(5) 
-  |> (x) => x * 2; /* 20 */
-
-let someNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-let aFewNumbers = 
-  someNumbers
-  |> myMap(add(5))
-  -> List.shuffle
-  -> List.take(5);
-
-```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFQegFRQE5gGMBXXAZwEsA3MKACgEMIATKEYeATwFthcQALcgQCUULBkw5aAcnpQAvAD4oAI2kAaKPHKlEM+sNFKtOvdJWjxqeGER5CULhwCy9EAroAzTQA9SR5QBvVCgoUgB3ckQCfjo-UWDQ0IAfKABtAF0FZUyQpNS0-k0AOlLELOM0z1p+YRLSp1cQWm8oRGEMvIBfNB70bFZycG0IMFIxCWtbKHomFnk4zQ4AqB8oAGooDjQpuwAvBTyAVig85OVZploj0TPlWh8VtZwAJmQoAZeABgn0GztSMAuGAAHJELgqMBkDxpACMmhemgAzJoACyaI6aABsmgA7JoAByaACcmlhXwyaH+MwAYmBwmCIVDxgs8oDgYzIWQ7o4XG4GHNroYzsUoAAZUzFUj8IieTw2EXiyWIegAazAQrQQA)
-???
-- recursive functions (help the compiler)
- - if a function refers to itself it needs to have the `let rec`
-
-- pipelines
-
-- two different "pipe" operators
-  - `|>` passes the left hand side as the _last_ parameter of the right hand side.
-  - `|.` passes it as the first (a la elixir) (actually I think they *just* changed this to ->)
-  - `|>` is just a function (`let (|>): ('a, 'a => 'b) => 'b;`)
-  - `|. ->` is preprocessor magic
-  - equivalent for functions of 1 parameter
-  - which one you need depends on what you're doing and how the API you are using is designed
-    - wrapping OO JS apis a common pattern is to basically make the `this` the first argument, so for translating chanining method calls you use the `|.` or `->`.
-    - the OCaml stdlib (Pervasives) such as it is tends to use the functional idiom of `data last`, so you need `|>`
-    - *but* the new Reason specific stdlib that is in progress (Belt) is "data first".
-    - This is part of the stdlib mess
 ---
 ## Modules
 - Basic unit of code organization
 - Files are implicitly modules
 - Can explicitly define sub (and sub-sub etc.) modules
-- Modules are namespaces and more!
 
 ```ocaml
 /* OurFirstProgram.re */
@@ -497,7 +392,7 @@ say("something else");
 ```
 
 ???
-- no equivalent of `main`.
+- no equivalent of `main`. when you run a file it does whatever it needs to to evaluate all the top level expressions.
 - you compile a module, and it transitively compiles its dependencies
 - can't have circular dependencies (unlike ES6)
 - no selective imports (another bone for the compiler), stuff is either in scope or not.
@@ -555,56 +450,174 @@ https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWA
 - you can also define standalone 'module types' i.e. interfaces, which can be implemented by more than one concerete module, but we'll get to that later
 ---
 
+## Basic types
+
+- bool
+
+- int
+
+- float
+
+- string
+
+- char
+
+- unit
+
+???
+- unit -> void
+  - return type of functions that "don't return anything" and the single parameter of functions that "don't take any parameters" (we'll see why later)
+- no "magic" polymorphism (all operators are functions too)
+  - different arithmetic operators for int and float
+
+---
+## Built-in container types
+
+- tuple 
+ - 
+  ```ocaml
+  let x: (int, string, char) = (1, "two", '3');
+  ```
+
+- list 
+ - 
+  ```ocaml
+  let y: list(int) = [1, 2, 3];
+  ```
+
+- array 
+ - 
+  ```ocaml
+  let z: array(int) = [|1, 2, 3|];
+  ```
+
+  [Try](https://sketch.sh/s/aaPkpQAWRavG8U6Fy7nzUp/)
+
+???
+- type annotations here are for pedagogical purposes, you probably wouldn't include them in real code.
+- Tuple - heterogeneous, fixed size
+- List - homogeneous, linked list, immutable cells
+- Array - homogeneous, mutable (good for javascript interop)
+
+- use lists unless you need javascript interop or random access (which you need surprisingly rarely)
+
+- all parameterized/polymorphic/generic types (more on that later)
+---
+## Custom types
+
+```ocaml
+/* variants / sum types */
+type userRole = User | Admin | SuperUser;
+let x = SuperUser;
+
+
+/* product types */
+type contactInfo = ContactInfo(string, string)
+let y = ContactInfo("5105551212", "joe@example.com")
+
+/* records */
+type user = {
+  name: string,
+  role: userRole
+};
+
+let u = {
+  name: "John",
+  role: Admin
+};
+
+/* type aliases */
+type zipCode = string;
+type position = (float, float);
+```
+[Try](https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/)
+
+???
+- variants / sum types (more later)
+- product types (more later)
+- type constructor vs data constructor.
+  - list(string) - type
+  - contactInfo - type (no parameters)
+  - User - data / value (no parameters)
+  - ContactInfo("blah", "blah") - data / value - two parameters
+- records - structurally typed / type inference (must be in scope)
+  - records from other modules
+  - record fields are just regular identifiers, must be brought into scope or fully qualified name used
+- type aliases for documentation only - no compiler checking
+https://sketch.sh/s/E7zplJd3hFPSR35PSkWZFA/
+
+---
 ### Algebraic Data Types
 
 - Model your domain by building up types that represent it from simple building blocks
 
-- Sums and Products
+#### Sum Types
+
+  - variants / tagged unions / discriminated unions
 
 ```ocaml
 
-/* sum type */
 type role = User | SuperUser | Admin;
 
+type contactInfo = 
+    Email(string)
+  | Phone(string)
+  
 type option('a) = Some('a) | None;
 
 type result('a, 'b) = Ok('a) | Error('b);
+```
+[Try](https://sketch.sh/s/dqf8ksH34c4wY60sSpCjYm/)
+???
+- sum types: also known as variants, tagged unions, discriminated unions etc.
+  - sum types without parameters are basically Enums
+  - boolean is a sum type   
+  - But variants can also carry a payload, which makes them very expressive.
+  - and that payload can be generic - type variables
+  - sum => each _thing_ adds one value to the type. the elements of the type are the _sum_ of the things between the pipes
+- type constructor vs data constructor
+  - type level vs term level
+    - list is a type constructor, not a type
+    - list(string) -> type
+    - contactInfo -> type
+    - Email is a data constructor (string -> contactInfo)
+    - Email("foo@bar.com") is a value of type contactInfo
+    - option is a type constructor
+    - option(string) is a type
 
-/* product type */
+---
+
+#### Product Types
+
+```ocaml
 type pair('a, 'b) = ('a, 'b);
 type newPair('a, 'b) = Pair('a, 'b);
 
+type date = Date(int, int, int)
+
+/* records */
 type user = {
   name: string,
-  email: string
+  role,
+  birthday: date
 };
 
-/* getUser: (email) => option(user) */
-/* getUser: (email) => result(user, string) */
-
-type badUser = pair(string, string);
+let u = {
+  name: "John",
+  role: Admin,
+  birthday: Date(1, 1, 1970);
+};
 ```
-[Try](https://sketch.sh/s/yymJlMBVTP3IAxojfmZmPe/)
+[Try](https://sketch.sh/s/GsjWieiXAzF8JHowlm8CYO/)
 ???
-https://sketch.sh/s/yymJlMBVTP3IAxojfmZmPe/
-https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnSFk8AYSEAKAOQBDAJRgKTQjFTL1XAHLzUYiXnypoxePoA0YJQCMNFAPIBrfRsYBRfET4yi5moGDIRLxQAMbwCJIY2OboyCoCQaoOzq5g9o4hyWBCqADuAAppGSpZLppgFel52Wa46FA0dBQA3lhgRSq6AFyQ8PjCAOZ2vWCoMGnEwxCjE1gAvqHg46jwHPjDCrPzrgB8YNKy8grttBqYWGFbOx37hwLEJzMC8AAWtFcdDiWYyE41uSVaYCcKl4uzqqUaQImgOWILUIiAA
-- sum types: also known as variants, tagged unions, discriminated unions etc.
-- sum types without parameters are basically Enums
-- boolean is a sum type
-   - usually better to use a custom sum type than boolean (boolean blindness)
-- But variants can also carry a payload, which makes them very expressive.
- - and that payload can be generic - type variables
- - that's why it's called a "type constructor" there are no values of type `option('a)` or `list('a)`
-- tuples and records are product types (equivalent except for the field names)
-
-- sum => each _thing_ adds one value to the type. the elements of the type are the _sum_ of the things between the pipes
-- product => the elements of the type is the cartesian product of the elements of the constituent types
-  - really explicit in OCaml where the syntax is `a * b`
-- type constructors vs data constructors (type world vs value world)
-- record constructors are implicit, types are inferred (locally)
+- product because the elements of the type is the cartesian product of the elements of it's components
+  - explicit in ocaml because the syntax is `a * b`
+- tuples, "named products" and records are all basically equivalent
+  - Date is just a 3-tuple with it's own constructor
+  - user record could just as easily be User(string, role, date), but it's nice to have the fields named
 ---
 
-- Combine them in all sorts of ways
+### Build more complex types
 
 ```ocaml
 
@@ -618,12 +631,19 @@ type user = {
 
 type siteUser = Anonymous | LoggedIn(user);
 
-```
+/* getUser: (email) => option(user) */
+/* getUser: (email) => result(user, string) */
 
-- define them recursively
+```
+[Try] https://sketch.sh/s/rXZLSkopgxOZWyzQgjOdvW/
+???
+- sums of products of sums of sums of products etc.
+
+---
+
+### Recursive types
 
 ```ocaml
-
 type myList('a) = Nil | Cons('a, myList('a));
 
 type author = {
@@ -633,14 +653,21 @@ type author = {
 and post = {
   title: string,
   body: string,
-  author: author
+  author
 };
-
 ```
-[Try](https://sketch.sh/s/X33Np67pJ4qFzCF1W8M0xL/)
+---
+
+### Type aliases
+
+```ocaml
+type zipCode = string;
+
+type position = (float, float);
+```
 ???
-https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAzgrgtmAuBPADgUzCYAoJawCcB7AG3QF4wBVCVfMAHzAGUo19raGwBBAExgCWAOwDcWHCnRQadCgG8sYMEICGMVAC5I8fMIDmAGkVhUMFQOJaIO-UaVFSWh6iMBfMRLwQB8VB1k8QoRCiDCE0lwAMoR6eqi8AJJCABTStACUHrjoMIiRAtbJAOQq6WAUAHIWXADCwRDFKgZgufmFJemZ4tlgKlDwABaEAQpKqupWNkKGxsiE1hBaxAXwyXPW6ViuYFgqQrxg6-DlYKMIPo7autN2YABGhLyIk9czSn2Dw1ofQ-hbIkA
-https://sketch.sh/s/X33Np67pJ4qFzCF1W8M0xL/
+- just to make code more self documenting, not compiler checked. the type and it's aliases are fully equivalent
+
 ---
 ## Function types
 
@@ -917,6 +944,8 @@ type user = {
 
 - [A small ReasonReact application](https://github.com/svoynow/memory-game)
 
+???
+- [an even smaller example](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAThDOBXANsAFAcgIYBooYCMBKKAXigHkBrTLEgHygFEYYB7GTYgbgChfQkKAAtgwMAHEIwFuxhkovKMqgA5NsABibRADsAJouWMAqrqyJgwjgEsAXhENKojbTAI39+iLqMvKVhCcNrrARHwC4NAAZtIAxsIASggowApwSKho8MAwIQDmeKLiUjKsHOH8gtBg1roQqogAtgRBCgAKdQ3NrZw5ebr5lcqRQojwQapYTdDkJhMwUzPZuQWVo9DsyLN+yvNtzowAyoiQMPvyh1AAgvpNIRFNbPoo0ExNWDbIUABcUADezmqUAAblhkJ4sMBHO9Psg+MptmksPAjqtBn80GCIfooTCPl8SKQAHxQfoFBFQJGg8GQ6Gwr6Y8mDImkjKpLG03HQ-QM5B4ZlDPgAXwUgOUwOxdPxcIUADUuXjeQTkCsBkLnNSpdyIHyFGgICrWQDeABIeAAdxswASUDQaPVADo4mxQp9dPADSq8BgAAIYIgkcUqYxQXKIWak6hoBU4pV8r1wwPOEOMaLgiZkUmyDhoABEVhs8CgRagug0UCwNJxUENcLzRBTUGFlJbmukldR6Py+tj0uVcMThONda+IoiwJdbriwAAkrpomwFE2+RRdMgQGg+Y7tfGjVdOq6IGuN2hakfGi0go3QwAhDTCLcqneKnl8vDn+qX3rrYHjNrkMG-6LNMEA4M4Wxgc4U7AFgM7zou4EtkAA)
 ---
 ### Advanced Modules
 
