@@ -58,21 +58,21 @@ class: center, middle
 
 ???
 - Can compile to javascript or native, although the focus is on JS. Native could be promising in the future.
-- Facebook messenger
+- Facebook Messenger
 ---
 
 ## A Little history
 
 - OCaml - a multiparadigm but mainly functional language.
-  - a very fast and modular compiler (pluggable backends etc.)
+  - a very fast and modular compiler.
 
 - Bucklescript
   - a new Javascript backend for the OCaml compiler from Bloomberg
 
 - Reason 
-    - Facebook has a bunch of tooling written in OCaml
-    - Wanted to make OCaml more approachable for more developers.
-    - w/ Bucklescript, can be used in place of Javascript for front-end work
+    - Facebook has a lot of OCaml tooling
+    - Wanted to make OCaml approachable for more developers.
+    - With Bucklescript, it can be used in place of Javascript for front-end work
       - ReasonReact
 ???
 - It has an object system but approximately no-one uses it for application level code.
@@ -97,7 +97,7 @@ to use it on the front end. (Fun fact, first prototype of React as written in St
 - more expressive (but also simpler) type system than i.e. Typescript
 - better type inference.   
   - You can write a fairly complex program w/o writing any type annotations (you will need to write type definitions, but that turns out to be a good design practice)
-- big company support (ast least some)
+- big company support (some, at least)
 - FFI - lots of wrapped libraries - immediate access to a decent part of the javascript ecosystem
   - if somebody hasn't already written a wrapper for a JS library you need, it's not hard to write one, especially if you just wrap the part of the API you need
   - generates very efficient and compact JS 
@@ -131,7 +131,7 @@ type user = {
 };
 
 ```
-[Try](https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/)
+[Link](https://sketch.sh/s/5IRlWcfV8n37S9zhfvoR6F/)
 
 ???
 
@@ -169,7 +169,7 @@ Js.log("is this an expression?");
 /* syntactic sugar for */
 let _ = Js.log("is this an expression?");
 ```
-[Try](https://sketch.sh/s/GUKZUUQjUADsOKVW2qGZSv/)
+[Link](https://sketch.sh/s/GUKZUUQjUADsOKVW2qGZSv/)
 
 ???
 
@@ -205,7 +205,7 @@ let first = ((x, _)) => x;
 
 ```
 
-[Try](https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/)
+[Link](https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/)
 ???
 - https://sketch.sh/s/r0WEfuIEfOdRRCT8SOaRvu/
 - https://reasonml.github.io/en/try?rrjsx=true&reason=PQKgBAFAlgdgLgGjLOBKMBeAfM+YTABQANgKZxgCGAJtZpAB5ICe62YDYA1GMwNyFCoSCiQo2OFPiJkKAWwCuxOFAAOxZvQhNeEsAG9CYDvl4CAvgKHgp7KQRLkqtAKz0a1CC9RXZYOKQw7q5ePoLCxJQARqRkdJQATgDmCnKBcADO0o4U1FAAbloAfnn5UNSB1EglBVAZAPYJeqXllWDAYC0NCb5OAI4K9Srp9KUQNWUVMNQYAIwADNVdjRgATPNhOZ0FAOpQcAAWACKkAGaUShQYkBOt00u13XOLYAD6zbVTdB3LPYIAUhkAHTEepJCAZOAJWBJV71U6vFAQUp7Q4nc6XcYtL5rF4QVAEzbCCAAckoSBJUT0ZOyflOUASkK02iQ7z0DD4QA
@@ -250,7 +250,7 @@ let aFewNumbers =
   -> List.take(5);
 
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFQegFRQE5gGMBXXAZwEsA3MKACgEMIATKEYeATwFthcQALcgQCUULBkw5aAcnpQAvAD4oAI2kAaKPHKlEM+sNFKtOvdJWjxqeGER5CULhwCy9EAroAzTQA9SR5QBvVCgoUgB3ckQCfjo-UWDQ0IAfKABtAF0FZUyQpNS0-k0AOlLELOM0z1p+YRLSp1cQWm8oRGEMvIBfNB70bFZycG0IMFIxCWtbKHomFnk4zQ4AqB8oAGooDjQpuwAvBTyAVig85OVZploj0TPlWh8VtZwAJmQoAZeABgn0GztSMAuGAAHJELgqMBkDxpACMmhemgAzJoACyaI6aABsmgA7JoAByaACcmlhXwyaH+MwAYmBwmCIVDxgs8oDgYzIWQ7o4XG4GHNroYzsUoAAZUzFUj8IieTw2EXiyWIegAazAQrQQA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFQegFRQE5gGMBXXAZwEsA3MKACgEMIATKEYeATwFthcQALcgQCUULBkw5aAcnpQAvAD4oAI2kAaKPHKlEM+sNFKtOvdJWjxqeGER5CULhwCy9EAroAzTQA9SR5QBvVCgoUgB3ckQCfjo-UWDQ0IAfKABtAF0FZUyQpNS0-k0AOlLELOM0z1p+YRLSp1cQWm8oRGEMvIBfNB70bFZycG0IMFIxCWtbKHomFnk4zQ4AqB8oAGooDjQpuwAvBTyAVig85OVZploj0TPlWh8VtZwAJmQoAZeABgn0GztSMAuGAAHJELgqMBkDxpACMmhemgAzJoACyaI6aABsmgA7JoAByaACcmlhXwyaH+MwAYmBwmCIVDxgs8oDgYzIWQ7o4XG4GHNroYzsUoAAZUzFUj8IieTw2EXiyWIegAazAQrQQA)
 ???
 - recursive functions (help the compiler)
  - if a function refers to itself it needs to have the `let rec`
@@ -287,7 +287,7 @@ let sum = add1(1); /* 2 */
 
 ```
 
-[Try](https://sketch.sh/s/58dKHnONC5p5G9vejPh1Wh/)
+[Link](https://sketch.sh/s/58dKHnONC5p5G9vejPh1Wh/)
 
 ???
 - shadowing allowed (like Elixir)
@@ -326,7 +326,7 @@ let or_ = (x) => {
 };
 
 ```
-[Try](https://sketch.sh/s/suor5RapKv60mL8k1iVUnN/)
+[Link](https://sketch.sh/s/suor5RapKv60mL8k1iVUnN/)
 ???
 - https://reasonml.github.io/en/try?rrjsx=true&reason=DYUwLgBADghglgJwgXggCgIwAYA0EBMWAlANwBQZokaAHngJ5ErTwLmXjrYNOqyLsq6APo9m-NhQD0AKiGYMYvqxIQZU2RBAIEAeyTqKQgGaIAzpFRpaeYUV4A+CDXamEFtBNIRN2NVKNOCWY0MAQAVxA8YxhgMxBSQMh9YRCaRwgAbzIICDMAdzgwAGMAC3R0rJzciAAfdDDI2wzGkGrc+rRRCFaWiLaaupFmlCcYuIGIAF9yGaA
 - https://sketch.sh/s/suor5RapKv60mL8k1iVUnN/
@@ -366,7 +366,7 @@ let hasAccess ({role, name}) => switch(role) {
 };
 
 ```
-[Try](https://sketch.sh/s/bODHWumiUAx4sIowpUVG1G/)
+[Link](https://sketch.sh/s/bODHWumiUAx4sIowpUVG1G/)
 ???
 - https://reasonml.github.io/en/try?rrjsx=true&reason=FAegVABAggNgLgUwE4DsCGcCWA3BBnCMEYYGBOCADwIF4IAKARgBoJGAGASgG4SyKmAHwBMggMysAnpwh1q3COAiTZdDoWKhIaAgGsEkgO4B7JABMNfcg0YjxUmTogAvWVTwKlKmmvatXPjasHDJEJEoA5gCuaOYQAMYwaFF4+Jak1gEQeIaYcPEAFvSUMgDewBAQggxorABGMoYFCCgQaKoQdbIAfBAARAgAjjEwfRVVNfWNza3tADydPf1dmAQRSAgYyGOV1fS1ndMtbRC9XTS9fe2rEOubiEhjAL7cQA
 
@@ -448,7 +448,7 @@ module Foo: {
   let foo = (y) => string_of_int(y + x) 
 };
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWAXOAM2TQAoBLAOzwEo4BeAPjgGc8AnKgcwG5MBfBhmy4YBAB5CAjAAY+OfEWRDSATzpNWHbgH0QhHVTxq4Aajji6AvpgAOnajpiUwUKjFJIQAOmIhSAEwyNDRAA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWAXOAM2TQAoBLAOzwEo4BeAPjgGc8AnKgcwG5MBfBhmy4YBAB5CAjAAY+OfEWRDSATzpNWHbgH0QhHVTxq4Aajji6AvpgAOnajpiUwUKjFJIQAOmIhSAEwyNDRAA)
 ???
 https://sketch.sh/s/4H3nJczgxefONrUjqnkU7K/
 https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWAXOAM2TQAoBLAOzwEo4BeAPjgGc8AnKgcwG5MBfBhmy4YBAB5CAjAAY+OfEWRDSATzpNWHbgH0QhHVTxq4Aajji6AvpgAOnajpiUwUKjFJIQAOmIhSAEwyNDRAA
@@ -498,7 +498,7 @@ https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWA
   let z: array(int) = [|1, 2, 3|];
   ```
 
-  [Try](https://sketch.sh/s/aaPkpQAWRavG8U6Fy7nzUp/)
+  [Link](https://sketch.sh/s/aaPkpQAWRavG8U6Fy7nzUp/)
 
 ???
 - type annotations here are for pedagogical purposes, you probably wouldn't include them in real code.
@@ -510,11 +510,11 @@ https://reasonml.github.io/en/try?rrjsx=true&reason=LYewJgrgNgpgBAMRCAXHA3gKDnWA
 
 - all parameterized/polymorphic/generic types (more on that later)
 ---
-### Algebraic Data Types
+## Algebraic Data Types
 
 - Model your domain by building up types that represent it from simple building blocks
 
-#### Sum Types
+### Sum Types
 
   - variants / tagged unions / discriminated unions
 
@@ -530,7 +530,7 @@ type option('a) = Some('a) | None;
 
 type result('a, 'b) = Ok('a) | Error('b);
 ```
-[Try](https://sketch.sh/s/dqf8ksH34c4wY60sSpCjYm/)
+[Link](https://sketch.sh/s/dqf8ksH34c4wY60sSpCjYm/)
 ???
 - sum types: also known as variants, tagged unions, discriminated unions etc.
   - sum types without parameters are basically Enums
@@ -550,7 +550,7 @@ type result('a, 'b) = Ok('a) | Error('b);
 
 ---
 
-#### Product Types
+### Product Types
 
 ```ocaml
 type pair('a, 'b) = ('a, 'b);
@@ -571,7 +571,7 @@ let u = {
   birthday: Date(1, 1, 1970);
 };
 ```
-[Try](https://sketch.sh/s/GsjWieiXAzF8JHowlm8CYO/)
+[Link](https://sketch.sh/s/GsjWieiXAzF8JHowlm8CYO/)
 ???
 - product because the elements of the type is the cartesian product of the elements of it's components
   - explicit in ocaml because the syntax is `a * b`
@@ -598,7 +598,7 @@ type siteUser = Anonymous | LoggedIn(user);
 /* getUser: (email) => result(user, string) */
 
 ```
-[Try](https://sketch.sh/s/rXZLSkopgxOZWyzQgjOdvW/)
+[Link](https://sketch.sh/s/rXZLSkopgxOZWyzQgjOdvW/)
 ???
 - sums of products of sums of sums of products etc.
 
@@ -632,7 +632,7 @@ type position = (float, float);
 - just to make code more self documenting, not compiler checked. the type and it's aliases are fully equivalent
 
 ---
-## Function types
+### Function types
 
 ```ocaml
 type jsonDecoder('a) = string => 'a;
@@ -645,7 +645,7 @@ type apiEndpoint('a) = {
 type mapper('a, 'b) = ('a => 'b) => list('a) => list('b);
 
 ```
-[Try](https://sketch.sh/s/OsPbN1WWw6i0lN3tlOaDZd/)
+[Link](https://sketch.sh/s/OsPbN1WWw6i0lN3tlOaDZd/)
 ???
 https://sketch.sh/s/OsPbN1WWw6i0lN3tlOaDZd/
 - particularly useful when you're defining module types / interfaces (example later)
@@ -670,7 +670,7 @@ let message = (user) => {
 };
 ```
 
-[Try](https://sketch.sh/s/sWUHmUMXcPO2sjGMYbAjYo/)
+[Link](https://sketch.sh/s/sWUHmUMXcPO2sjGMYbAjYo/)
 ???
 - https://sketch.sh/s/sWUHmUMXcPO2sjGMYbAjYo/
 - https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBATg9gG2gXigVQM4RlAPlAZQFdIZNs8oBBAEwFsBLAOwG4AoNgegCoo6BDYAGMAFlAxE6UUJAxQ4TaSIgMcQhRmAwiQ4HBhzunLrxoRN23URjQb6mDUPG2M6ESw5UAbzZQoTfjoIAC5xLWYAcwAaXygIAQYEUItImL94JFCMiBiAX3YXcGgMBmAIck9qJgUQOjh3SgAZOAiIiBoASSYACndsAEoCpGA+cwx+NqhUXo9+qYA+KB8-DAB3UtEZgaXYv3wqaqZa+rlkRYAiAAUkfiwoACUICIZNbHPdppa2zp6vAKDcnMzlBzgAJCAIBBwEFQADUsP8gQgsXybFRJigADMiExdAwFNIilAjIVIFAAFYYBQAEQg6jMMG6AHJ+ECwjBIgsoCyCq4oPwwAwAKJMGhgODMYDM1lTHZ+axJdmpWJmenYUKUml0uAM6X9NEsIA
@@ -703,7 +703,7 @@ let isFirstCharAscii = ({nickname}) => {
   -> Option.map(x => x > 127);
 };  
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACo8QhI86VkFACNgYHhnTfXtXShOfABRTh4-RABhPzoiAEFyzk566xLVopNzhewhJiCAC0bl6-QgA2m8DoiAAsnQQPIAFL4AYxDjcHgDYTAAAmYAACsBuIgvoh5AB2FRqGgwqBww4DBgYpLtRJQNwARhqTLQmnQQA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACo8QhI86VkFACNgYHhnTfXtXShOfABRTh4-RABhPzoiAEFyzk566xLVopNzhewhJiCAC0bl6-QgA2m8DoiAAsnQQPIAFL4AYxDjcHgDYTAAAmYAACsBuIgvoh5AB2FRqGgwqBww4DBgYpLtRJQNwARhqTLQmnQQA)
 
 ???
 - https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACo8QhI86VkFACNgYHhnTfXtXShOfABRTh4-RABhPzoiAEFyzk566xLVopNzhewhJiCAC0bl6-QgA2m8DoiAAsnQQPIAFL4AYxDjcHgDYTAAAmYAACsBuIgvoh5AB2FRqGgwqBww4DBgYpLtRJQNwARhqTLQmnQQA
@@ -734,7 +734,7 @@ let safeHead = (xs) => {
   };
 };
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACpLbkQ7XZS3aVkFA6hN9e1dNjppsAnOADdOABNcy0S7TEP3Gi8ffzyb6-CLRAAM7WyEDAGSg0QA+u04glElB1lBvoU0Jp0KUbncABJgOgveqJfA-cJsby+ALksKw6IAbQAupCcoyoEy-HYBnz4Yg2XlkWB5H41DQcTigA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACpLbkQ7XZS3aVkFA6hN9e1dNjppsAnOADdOABNcy0S7TEP3Gi8ffzyb6-CLRAAM7WyEDAGSg0QA+u04glElB1lBvoU0Jp0KUbncABJgOgveqJfA-cJsby+ALksKw6IAbQAupCcoyoEy-HYBnz4Yg2XlkWB5H41DQcTigA)
 ???
 - https://reasonml.github.io/en/try?rrjsx=true&reason=PYBwpgdgBAQmA2AXA3AKFYgnuKBXAzmAE5QC8UA3qlFBAIYC2YAXFPokQJYQDmANNVqcAxgGt6TVqESdgEABTsuvAJSoAvmlTwwiNsKJhIAOUZgyUeRQlg+QsTfUqyAPkqD8Ad06JhAC3kIEXEzZyoaGgAfKABlYCZ5AA9nUjdEwSioYzlzVNozQXUNLR09fAMjCFMmACYLKxs7IIczJ1coVABIAHkQGTkAOh5dAHUfPwARMAAzOlwkQODG-KYVLQB6ACpLbkQ7XZS3aVkFA6hN9e1dNjppsAnOADdOABNcy0S7TEP3Gi8ffzyb6-CLRAAM7WyEDAGSg0QA+u04glElB1lBvoU0Jp0KUbncABJgOgveqJfA-cJsby+ALksKw6IAbQAupCcoyoEy-HYBnz4Yg2XlkWB5H41DQcTigA
 ---
@@ -801,7 +801,7 @@ type route =
 - route is part of the state of your top level component and there's a big switch that dispatches to all the individual pages.
 - can't forget one
 
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBATg9gV2NAvFAUFLUAScC2EAFAM7AwCWAdgOYCUmUAPlADJw3WMsBKEnZCDG5QACnDIkR4sqXLV6GLCwByEAO4zgIgKIATCsC1zKtBsrHwAZhQA2xMqfpA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBATg9gV2NAvFAUFLUAScC2EAFAM7AwCWAdgOYCUmUAPlADJw3WMsBKEnZCDG5QACnDIkR4sqXLV6GLCwByEAO4zgIgKIATCsC1zKtBsrHwAZhQA2xMqfpA)
 
 ---
 
@@ -816,7 +816,7 @@ type apiData('a, 'b) =
   | Error('b);
 
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAhmCWARGwYAoDkMA0UMCMBKKAXgCgpKoA5Ae2ACUIBHAVwgGdgIATCqAD5QAMrRg94AOwDm-IQGVWAYyWcOmGITlQAogCc9tPZiIBuIA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAhmCWARGwYAoDkMA0UMCMBKKAXgCgpKoA5Ae2ACUIBHAVwgGdgIATCqAD5QAMrRg94AOwDm-IQGVWAYyWcOmGITlQAogCc9tPZiIBuIA)
 ???
 - Another React pattern
 ---
@@ -840,7 +840,7 @@ let userByEmail = (Email(email)) => {
 }
 
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBArgzhATgOwIYFtoF4oFUEoYQAUcwiAlsgOYCUA3AFCiRQTqoUA2UOAoh26lyVOk2bho8JLygBvRlFgE0mAFzKkqiABpFbQVw3tOXRgF9xXCME2IAQiAGnZxZ0JPdatXgD55+gD0AFRQAHQRUMGBFkA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBArgzhATgOwIYFtoF4oFUEoYQAUcwiAlsgOYCUA3AFCiRQTqoUA2UOAoh26lyVOk2bho8JLygBvRlFgE0mAFzKkqiABpFbQVw3tOXRgF9xXCME2IAQiAGnZxZ0JPdatXgD55+gD0AFRQAHQRUMGBFkA)
 ???
 - makes it harder to pass the wrong parameter to a function, but we can get fancier.
 
@@ -865,7 +865,7 @@ type user = {
 
 ```
 
-[Try](https://sketch.sh/s/4jKDdw9bOxTdfZfR5ij7Wr/)
+[Link](https://sketch.sh/s/4jKDdw9bOxTdfZfR5ij7Wr/)
 ???
 - enforcing that a  user must have email or phone or both
 
@@ -896,7 +896,7 @@ type user = {
 };
 
 ```
-[Try](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAThDOBXANsAFAcgIYBooYCMBKKAXigHkBrTLEgHygFEYYB7GTYgbgCheAtmwAmKaEwFYAlsigAuKAG9eUKKEhQAblmRThWYBGETpyPquQRgUAOZWTMhWm279h45JklSAPijxgGCkAOxtzKEtrFz0DCAdkJwCg0O8-OCRUZx0Y93i8JJCbIj4AXzIlFTVwaGi3I3jygDVsuo9TNAKU8MitFtiG8jQIT2RUioBIeAB3KWAAYwALKDQAZUDCgDo5tmDgaWD4IZG8DAABDCISZVUbqEZAxGhfShpm11i2mSPTS8rbxgAZjp4E8-Cx2JwAETABZSeBQOFQYJsaxYXquKDDUyQoh-KAlcIEyo9OzAAbLN45eojb5eMZYmSlPi8dTQRAgmDla5IrACCAKTo2HCVBkJZgjDa1D7xXgEoA)
+[Link](https://reasonml.github.io/en/try?rrjsx=true&reason=C4TwDgpgBAThDOBXANsAFAcgIYBooYCMBKKAXigHkBrTLEgHygFEYYB7GTYgbgCheAtmwAmKaEwFYAlsigAuKAG9eUKKEhQAblmRThWYBGETpyPquQRgUAOZWTMhWm279h45JklSAPijxgGCkAOxtzKEtrFz0DCAdkJwCg0O8-OCRUZx0Y93i8JJCbIj4AXzIlFTVwaGi3I3jygDVsuo9TNAKU8MitFtiG8jQIT2RUioBIeAB3KWAAYwALKDQAZUDCgDo5tmDgaWD4IZG8DAABDCISZVUbqEZAxGhfShpm11i2mSPTS8rbxgAZjp4E8-Cx2JwAETABZSeBQOFQYJsaxYXquKDDUyQoh-KAlcIEyo9OzAAbLN45eojb5eMZYmSlPi8dTQRAgmDla5IrACCAKTo2HCVBkJZgjDa1D7xXgEoA)
 
 ???
 - Hide the constructor to enforce more complex rules. (also possible in OO, but here's its even lighterweight)
